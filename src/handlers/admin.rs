@@ -111,7 +111,7 @@ async fn update_user(
         .await?
         .ok_or_else(|| AppError::NotFound(USER_NOT_FOUND.into()))?;
 
-    if let Some(ref email) = payload.email {
+    if let Some(email) = &payload.email {
         if email != &user.email {
             if user_repo.find_by_email(email).await?.is_some() {
                 return Err(AppError::Conflict(EMAIL_ALREADY_EXISTS.into()));
@@ -120,11 +120,11 @@ async fn update_user(
         }
     }
 
-    if let Some(ref username) = payload.username {
+    if let Some(username) = &payload.username {
         user_repo.update_username(&object_id, username).await?;
     }
 
-    if let Some(ref password) = payload.password {
+    if let Some(password) = &payload.password {
         let password_hash = hash_password(password)?;
         user_repo
             .update_password(&object_id, &password_hash)
